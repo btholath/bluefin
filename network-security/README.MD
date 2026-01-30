@@ -1,266 +1,186 @@
-This is an excellent way to learn. By "containerizing" the entire architecture, you create a portable lab that mimics a complex enterprise environment (DMZ, Internal Network, External Internet) right on your laptop.
+Here is a complete, professional `README.md` file for your repository. It covers the architecture, setup, testing, and troubleshooting steps in detail.
 
-We will use **Docker Compose** to orchestrate five containers.
-
-### **The Local Lab Architecture**
-
-1. **`health-net` (172.20.0.0/16):** A custom bridge network that simulates our "Intranet".
-2. **`mock-dns` (172.20.0.2):** A **CoreDNS** server that resolves `secure.bank-partner.com` to our local SFTP container.
-3. **`partner-sftp` (172.20.0.3):** A Linux server running SSH/SFTP.
-4. **`active-directory`:** An **OpenLDAP** server (simulating AD) with pre-loaded users.
-5. **`gateway-csharp`:** Your .NET Web API.
-6. **`backend-java`:** Your Java TCP Processor.
+You can copy and paste this directly into your `README.md` file.
 
 ---
 
-### **Step 1: The Folder Structure**
+# 🛡️ Bluefin Security: Secure Hybrid Microservices Architecture
 
-Create a folder named `HealthProviderLab` and set it up like this:
+A proof-of-concept secure data ingestion pipeline that bridges modern **.NET 8** microservices with legacy **Java 21** systems. This project demonstrates polyglot orchestration, secure identity management (LDAP), and encrypted file transport (SFTP) within a self-healing Docker environment.
 
-```text
-HealthProviderLab/
-├── docker-compose.yml       # The Master Plan
-├── config/
-│   ├── dns/
-│   │   └── Corefile         # DNS Configuration
-│   └── ldap/
-│       └── users.ldif       # Active Directory Users
-├── src/
-│   ├── CSharpGateway/       # Your C# Project
-│   │   └── Dockerfile
-│   └── JavaBackend/         # Your Java Project
-│       └── Dockerfile
+## 🚀 Project Overview
+
+The system simulates a secure medical claim processing pipeline:
+
+1. **Ingestion:** A **C# Web API** receives sensitive patient data via HTTP.
+2. **Identity:** The user is authenticated against a live **OpenLDAP** directory.
+3. **Handover:** Data is securely passed to a backend service via a **Shared Docker Volume**.
+4. **Processing:** A **Java Backend** service (listening on TCP) picks up the file.
+5. **Delivery:** The file is encrypted and uploaded to a partner bank's **Secure SFTP** server.
+
+---
+
+## 🏗️ Architecture
+
+The system consists of 4 main services and 2 utility containers orchestrated via Docker Compose:
+
+| Service | Technology | Port | Description |
+| --- | --- | --- | --- |
+| **Gateway** | .NET 8 (C#) | `5064` | Secure REST API, LDAP Auth, File Validation. |
+| **Backend** | Java 21 | `—` | TCP Listener, SFTP Client (JSch), Batch Processor. |
+| **Identity** | OpenLDAP | `1389` | Active Directory simulation for user authentication. |
+| **Bank Vault** | Atmoz SFTP | `2222` | External partner simulation for secure file delivery. |
+| **Utils** | Alpine Linux | `—` | Init containers for automated permission fixes (`chmod/chown`). |
+
+---
+
+## 🛠️ Tech Stack
+
+* **Languages:** C# (ASP.NET Core 8), Java 21 (Maven)
+* **Containerization:** Docker, Docker Compose
+* **Security:** LDAP (Identity), SSH/SFTP (Transport), Non-root containers
+* **Networking:** Internal Docker DNS, TCP Sockets
+
+---
+
+## ⚡ Getting Started
+
+### Prerequisites
+
+* **Docker Desktop** (Windows/Mac) or **Docker Engine** (Linux)
+* **Git**
+
+### Installation
+
+1. **Clone the Repository**
+```bash
+git clone https://github.com/YOUR_USERNAME/bluefin.git
+cd bluefin
+
+```
+
+
+2. **Start the Architecture**
+   This command builds the images, creates the networks, and initializes the volumes.
+```bash
+docker-compose up -d --build
+
+```
+
+
+3. **Verify Status**
+   Ensure all containers are running (except the `init` containers, which should be `Exited (0)`).
+```bash
+docker ps -a
+
+```
+
+
+
+---
+
+## 🧪 Testing the Pipeline
+
+To test the system, we simulate a doctor (`dr_smith`) uploading a claim file.
+
+### 1. The Command
+
+Run this command in PowerShell or Terminal:
+
+```powershell
+curl.exe -X POST "http://localhost:5064/api/claims/upload" `
+     -H "username: dr_smith" `
+     -H "password: DoctorPassword!" `
+     -F "file=@patient_data.xml"
+
+```
+
+> **Note:** Ensure `patient_data.xml` exists in your current folder. A sample file is provided in the repo.
+
+### 2. Expected Output
+
+```json
+{"message":"File processed successfully"}
+
+```
+
+### 3. Verification Logs
+
+Check the logs to trace the request through the system.
+
+**C# Gateway (Authentication & Handover):**
+
+```bash
+docker logs gateway-web
+# Output:
+# User dr_smith authenticated. Processing file: patient_data.xml
+# File saved to: /app/shared/patient_data.xml
+
+```
+
+**Java Backend (Pickup & Delivery):**
+
+```bash
+docker logs backend-proc
+# Output:
+# [INCOMING] Received Command: PROCESS_FILE:shared/patient_data.xml
+# 🔄 Initiating Secure Transfer...
+# ✅ SSH Handshake Complete.
+# 📤 SUCCESS: File uploaded to bank-sftp:/upload/patient_data.xml
+
+```
+
+**Bank Vault (Final Confirmation):**
+
+```bash
+docker exec bank-sftp ls -l /home/bank_user/upload
+# Output:
+# -rw-r--r-- 1 bank_user users 1089 ... patient_data.xml
 
 ```
 
 ---
 
-### **Step 2: The Master Blueprint (`docker-compose.yml`)**
+## 🧩 Key Implementation Details
 
-This file defines the entire world. Copy this into `docker-compose.yml`.
+### The "Init Container" Pattern
+
+One of the biggest challenges in Docker is managing Linux file permissions across containers. This project uses dedicated "Init Containers" to automatically set permissions on startup, ensuring the C# (App User) and Java (App User) containers can write to the same shared volume.
 
 ```yaml
-version: '3.8'
-
-services:
-  # 1. THE DNS SERVER (Simulates Corporate DNS)
-  mock-dns:
-    image: coredns/coredns
-    container_name: corporate-dns
-    volumes:
-      - ./config/dns:/root/config
-    command: -conf /root/config/Corefile
-    networks:
-      health-net:
-        ipv4_address: 172.20.0.2
-
-  # 2. THE PARTNER BANK (Secure SFTP)
-  partner-sftp:
-    image: atmoz/sftp
-    container_name: bank-sftp
-    ports:
-      - "2222:22" # Map local port 2222 to container 22
-    # Create user: pass:UID
-    command: bank_user:SecretPass123!:1001
-    networks:
-      health-net:
-        ipv4_address: 172.20.0.3
-
-  # 3. ACTIVE DIRECTORY (Simulated via OpenLDAP)
-  active-directory:
-    image: bitnami/openldap:latest
-    container_name: corp-ad
-    ports:
-      - "1389:1389"
-    environment:
-      - LDAP_ADMIN_USERNAME=admin
-      - LDAP_ADMIN_PASSWORD=adminpassword
-      - LDAP_ROOT=dc=healthprovider,dc=com
-    volumes:
-      - ./config/ldap:/docker-entrypoint-initdb.d # Auto-load users
-    networks:
-      - health-net
-
-  # 4. C# GATEWAY (The Web API)
-  gateway-csharp:
-    build: ./src/CSharpGateway
-    container_name: gateway-web
-    ports:
-      - "5000:8080" # Access via http://localhost:5000
-    environment:
-      - ActiveDirectory__Server=active-directory
-      - ActiveDirectory__Port=1389
-    depends_on:
-      - active-directory
-      - backend-java
-    networks:
-      - health-net
-
-  # 5. JAVA BACKEND (The Processor)
-  backend-java:
-    build: ./src/JavaBackend
-    container_name: backend-proc
-    dns:
-      - 172.20.0.2 # <--- CRITICAL: Forces Java to use our Mock DNS
-    networks:
-      - health-net
-
-networks:
-  health-net:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
+# docker-compose.yml snippet
+fix-permissions:
+  image: alpine
+  command: sh -c "mkdir -p /shared && chmod -R 777 /shared"
+  volumes:
+    - shared-data:/shared
 
 ```
+
+### Polyglot Networking
+
+Instead of using HTTP for everything, the C# Gateway communicates with the Java Backend via a raw **TCP Socket** on port 9999. This demonstrates high-performance, low-overhead inter-service communication common in legacy integrations.
 
 ---
 
-### **Step 3: Setup the Infrastructure Services**
+## 🔧 Troubleshooting
 
-#### **A. DNS Configuration (CoreDNS)**
+**1. "Access Denied" or Permission Errors**
+If the C# app crashes with `Access to the path ... is denied`, force a permission fix:
 
-Create `config/dns/Corefile`. This tells the DNS server: *"If anyone asks for `secure.bank-partner.com`, send them to `172.20.0.3` (the SFTP container)."*
-
-```text
-.:53 {
-    forward . 8.8.8.8
-    log
-    errors
-    hosts {
-        172.20.0.3 secure.bank-partner.com
-        fallthrough
-    }
-}
-
-```
-
-#### **B. Active Directory Users (LDIF)**
-
-Create `config/ldap/users.ldif`. This creates a user "dr_smith" so you can log in.
-
-```ldif
-dn: ou=users,dc=healthprovider,dc=com
-objectClass: organizationalUnit
-ou: users
-
-dn: cn=dr_smith,ou=users,dc=healthprovider,dc=com
-objectClass: inetOrgPerson
-cn: dr_smith
-sn: Smith
-uid: dr_smith
-userPassword: DoctorPassword!
-mail: smith@healthprovider.com
-
-```
-
----
-
-### **Step 4: The Application Dockerfiles**
-
-You need to "Dockerize" your code so it can run in this network.
-
-#### **C# Gateway (`src/CSharpGateway/Dockerfile`)**
-
-```dockerfile
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /app
-COPY . .
-RUN dotnet publish -c Release -o out
-
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
-WORKDIR /app
-COPY --from=build /app/out .
-# Install LDAP libs for Linux
-RUN apt-get update && apt-get install -y libldap-2.5-0 
-ENTRYPOINT ["dotnet", "CSharpGateway.dll"]
-
-```
-
-#### **Java Backend (`src/JavaBackend/Dockerfile`)**
-
-```dockerfile
-FROM maven:3.9.6-eclipse-temurin-21 AS build
-WORKDIR /app
-COPY pom.xml .
-COPY src ./src
-RUN mvn clean package -DskipTests
-
-FROM eclipse-temurin:21-jre
-WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
-CMD ["java", "-jar", "app.jar"]
-
-```
-
----
-
-### **Step 5: Code Adjustments for Docker**
-
-You need to slightly update your code to look for these environment variables and container names.
-
-**1. C# Update (`ClaimsController.cs`):**
-Change the hardcoded "localhost" to use the container name `backend-proc` (which Docker DNS resolves automatically) and the config for AD.
-
-```csharp
-// Connect to Java Backend
-await client.ConnectAsync("backend-java", 9999); 
-
-// Connect to LDAP (Active Directory)
-string ldapServer = Environment.GetEnvironmentVariable("ActiveDirectory__Server"); // "active-directory"
-int ldapPort = int.Parse(Environment.GetEnvironmentVariable("ActiveDirectory__Port")); // 1389
-
-```
-
-**2. Java Update (`BackendService.java`):**
-Ensure your Java code prints the DNS resolution. Because we forced the DNS server in `docker-compose.yml`, this line:
-
-```java
-InetAddress address = InetAddress.getByName("secure.bank-partner.com");
-
-```
-
-...will now magically resolve to `172.20.0.3` (your local SFTP container), **proving that your custom DNS server is working.**
-
----
-
-### **How to Run the Project**
-
-1. **Build and Start:**
 ```bash
-docker-compose up --build
+docker-compose down -v
+docker-compose up -d
 
 ```
 
+*The `-v` flag is critical to delete the old volume so the Init Container can reset permissions.*
 
-2. **Test the SFTP (Manual Check):**
-   Open a terminal and try to connect to your "Bank" manually:
-```bash
-sftp -P 2222 bank_user@localhost
-# Password: SecretPass123!
+**2. "Connection Refused" (Java Backend)**
+If Java cannot connect to SFTP (`Connection refused`), ensure the config uses the **Docker Service Name** (`bank-sftp`), not `localhost`.
 
-```
+---
 
+## 📜 License
 
-3. **Run the Scenario:**
-   Use Postman or Curl to hit your C# API:
-```bash
-curl -X POST https://localhost:5000/api/claims/upload \
-     -H "username: dr_smith" \
-     -H "password: DoctorPassword!" \
-     -F "file=@patient_claim.xml"
-
-```
-
-
-
-### **What happens behind the scenes?**
-
-1. **Request:** Hits port 5000 on your laptop -> forwards to **C# Container**.
-2. **Auth:** C# talks to **OpenLDAP Container** on port 1389. Verifies `dr_smith`.
-3. **Internal Handoff:** C# opens TCP socket to **Java Container** (hostname `backend-java`).
-4. **Processing:** Java receives command. It asks **CoreDNS Container** (172.20.0.2): *"Who is https://www.google.com/url?sa=E&source=gmail&q=secure.bank-partner.com?"*
-5. **DNS Reply:** CoreDNS says: *"That is 172.20.0.3"*.
-6. **Transfer:** Java opens SSH tunnel to **SFTP Container** (172.20.0.3) and uploads the file.
-
-You have now simulated a full enterprise infrastructure stack on your local machine!
+This project is licensed under the MIT License - see the LICENSE file for details.
