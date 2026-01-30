@@ -1,0 +1,8 @@
+# Move user to the ROOT so C# can find him easily
+dn: cn=dr_smith,dc=healthprovider,dc=com
+objectClass: inetOrgPerson
+cn: dr_smith
+sn: Smith
+uid: dr_smith
+userPassword: DoctorPassword!
+mail: smith@healthprovider.com

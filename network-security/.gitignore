@@ -1,0 +1,10 @@
+bin/
+obj/
+out/
+target/
+.idea/
+.vscode/
+*.class
+*.jar
+*.log
+.venv/

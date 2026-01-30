@@ -1,0 +1,109 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\bijut\\source\\repos\\CSharpGateway\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{9321E12B-8044-72FF-81ED-9E15E87A0E63}|CSharpGateway.csproj|c:\\users\\bijut\\source\\repos\\csharpgateway\\patient_data.xml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{9321E12B-8044-72FF-81ED-9E15E87A0E63}|CSharpGateway.csproj|solutionrelative:patient_data.xml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9321E12B-8044-72FF-81ED-9E15E87A0E63}|CSharpGateway.csproj|c:\\users\\bijut\\source\\repos\\csharpgateway\\csharpgateway.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{9321E12B-8044-72FF-81ED-9E15E87A0E63}|CSharpGateway.csproj|solutionrelative:csharpgateway.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9321E12B-8044-72FF-81ED-9E15E87A0E63}|CSharpGateway.csproj|c:\\users\\bijut\\source\\repos\\csharpgateway\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9321E12B-8044-72FF-81ED-9E15E87A0E63}|CSharpGateway.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9321E12B-8044-72FF-81ED-9E15E87A0E63}|CSharpGateway.csproj|c:\\users\\bijut\\source\\repos\\csharpgateway\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{9321E12B-8044-72FF-81ED-9E15E87A0E63}|CSharpGateway.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9321E12B-8044-72FF-81ED-9E15E87A0E63}|CSharpGateway.csproj|c:\\users\\bijut\\source\\repos\\csharpgateway\\controllers\\claimscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9321E12B-8044-72FF-81ED-9E15E87A0E63}|CSharpGateway.csproj|solutionrelative:controllers\\claimscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "patient_data.xml",
+              "DocumentMoniker": "C:\\Users\\bijut\\source\\repos\\CSharpGateway\\patient_data.xml",
+              "RelativeDocumentMoniker": "patient_data.xml",
+              "ToolTip": "C:\\Users\\bijut\\source\\repos\\CSharpGateway\\patient_data.xml",
+              "RelativeToolTip": "patient_data.xml",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAACIAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003576|",
+              "WhenOpened": "2026-01-30T00:23:01.504Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\bijut\\source\\repos\\CSharpGateway\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\bijut\\source\\repos\\CSharpGateway\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-29T21:09:53.307Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\bijut\\source\\repos\\CSharpGateway\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\Users\\bijut\\source\\repos\\CSharpGateway\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-01-29T21:08:47.353Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CSharpGateway",
+              "DocumentMoniker": "C:\\Users\\bijut\\source\\repos\\CSharpGateway\\CSharpGateway.csproj",
+              "RelativeDocumentMoniker": "CSharpGateway.csproj",
+              "ToolTip": "C:\\Users\\bijut\\source\\repos\\CSharpGateway\\CSharpGateway.csproj",
+              "RelativeToolTip": "CSharpGateway.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-29T20:58:46.417Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{c6f34f0d-7ae5-4f3a-be61-fe0c21ae9eb8}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ClaimsController.cs",
+              "DocumentMoniker": "C:\\Users\\bijut\\source\\repos\\CSharpGateway\\Controllers\\ClaimsController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ClaimsController.cs",
+              "ToolTip": "C:\\Users\\bijut\\source\\repos\\CSharpGateway\\Controllers\\ClaimsController.cs",
+              "RelativeToolTip": "Controllers\\ClaimsController.cs",
+              "ViewState": "AgIAAEEAAAAAAAAAAAAIwAIAAAA1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-29T20:56:13.441Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

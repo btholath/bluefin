@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ClaimSubmission xmlns="http://www.blueshield.com/schema/claims">
+    <Header>
+        <SubmissionDate>2026-01-29</SubmissionDate>
+        <SenderID>HOSPITAL_SOCAL_001</SenderID>
+        <ReceiverID>BANK_PARTNER_SFTP</ReceiverID>
+    </Header>
+    <Claim>
+        <ClaimID>CLM-2026-998877</ClaimID>
+        <Patient>
+            <MemberID>BS-55667788</MemberID>
+            <FirstName>Jane</FirstName>
+            <LastName>Doe</LastName>
+            <DOB>1985-04-12</DOB>
+        </Patient>
+        <Services>
+            <ServiceLine>
+                <LineID>1</LineID>
+                <ServiceDate>2026-01-28</ServiceDate>
+                <ProcedureCode>99213</ProcedureCode>
+                <Description>Office Visit - Established Patient</Description>
+                <ChargeAmount>150.00</ChargeAmount>
+            </ServiceLine>
+            <ServiceLine>
+                <LineID>2</LineID>
+                <ServiceDate>2026-01-28</ServiceDate>
+                <ProcedureCode>36415</ProcedureCode>
+                <Description>Venipuncture</Description>
+                <ChargeAmount>25.00</ChargeAmount>
+            </ServiceLine>
+        </Services>
+        <TotalCharge>175.00</TotalCharge>
+    </Claim>
+</ClaimSubmission>
